@@ -32,13 +32,12 @@ def split_rows(file_string):    #function to split ";" to get the rows
     rows=file_string.split("\n")
     return rows
 
-def student_info(ca1_rows):    
+def student_info(ca1_rows):    #function to get first,last and student id
     first_name=[]
     last_name=[]
     student_id=[]
     for row in ca1_rows[1:]:
         col=row.split(";")
-   
         first_name.append(col[1])
         last_name.append(col[0])
         student_id.append(col[2])
@@ -58,9 +57,9 @@ def ca1_calculation(ca1_rows): #function to calculate the ca1 result and change 
         col=row.split(";")
         total_mark=calculate_total_mark(col,3,10) #to get total marks
         ca1_total.append(total_mark)
-        total_mark_100=round(total_mark/21*100,2)
-        ca1_result_100.append(total_mark_100)
-        total_mark=round(total_mark/21*15,2)     
+        total_mark_100=round(total_mark/21*100,2)   #to get 100%
+        ca1_result_100.append(total_mark_100) 
+        total_mark=round(total_mark/21*15,2)    #to get 15% 
         ca1_result_15.append(total_mark)
     return ca1_total,ca1_result_15,ca1_result_100
 
@@ -70,11 +69,11 @@ def ca2_calculation(ca2_rows): #function to calculate the ca2 result and change 
     ca2_total=[]  
     for row in ca2_rows[1:]:
         col=row.split(";")
-        total_mark=calculate_total_mark(col,3,8)
+        total_mark=calculate_total_mark(col,3,8)    #to get total
         ca2_total.append(total_mark)
-        total_mark_100=round(total_mark/16*100,2)
+        total_mark_100=round(total_mark/16*100,2)   #to get 100%
         ca2_result_100.append(total_mark_100)
-        total_mark=round(total_mark/16 *15,2)
+        total_mark=round(total_mark/16 *15,2)   #to get 15%
         ca2_result_15.append(total_mark)
     return ca2_total,ca2_result_15,ca2_result_100
 
@@ -84,12 +83,12 @@ def final_calculation(final_rows): #function to calculate the final result and c
     final_total=[]
     for row in final_rows[1:]:
         col=row.split(";")
-        total_mark=calculate_total_mark(col,3,16)
+        total_mark=calculate_total_mark(col,3,16)   #to get total
         final_total.append(total_mark)
-        total_mark_100=round(total_mark/50*100,2)
-        final_result_100.append(total_mark_100)
-        total_mark_40=round(total_mark/50 *40,2)
-        final_result_40.append(total_mark_40)
+        total_mark_100=round(total_mark/50*100,2)   #to get 100
+        final_result_100.append(total_mark_100) 
+        total_mark_40=round(total_mark/50 *40,2)    #to get 40
+        final_result_40.append(total_mark_40)  
     return final_total,final_result_40,final_result_100
 
 def exercise_calculation(exercise_rows):
@@ -112,20 +111,20 @@ def find_group(student_id, groups_rows):    #to match the group number to the st
         if col[0]==student_id:
             return col[1]
 
-def find_group_grade(group, group_grade_rows):
+def find_group_grade(group, group_grade_rows):  #to get the respect grade to the respect group mate
     for row in group_grade_rows[1:]:
         col=row.split(";")
         if col[0]==group:
             return float(col[1])
 
-def overall_calculation(ca1_15,ca2_15,exercise_15,project_15,final_40):
+def overall_calculation(ca1_15,ca2_15,exercise_15,project_15,final_40): #Total grade
     overall_result=[]
     for i in range(len(ca1_15)):
         total=(ca1_15[i]+ca2_15[i]+exercise_15[i]+project_15[i]+final_40[i])
         overall_result.append(round(total,2))
     return overall_result
 
-def save_results(students, filename):
+def save_results(students, filename):   #to save result function
 
     s = "First name;Last name;ID;CA1 Total;CA1 %;CA1 /15;CA2 Total;CA2 %;CA2 /15;Exercise Total;Exercise %;Exercise /15;Project Group;Project Total;Project /15;Final Total;Final %;Final /40;Overall\n"
 
@@ -149,6 +148,7 @@ def main():
     group_list = []
     student=[]
 
+    #read all the csv files
     ca1_file = read_file(folder + filenames[0])
     ca2_file = read_file(folder + filenames[1])
     final_file = read_file(folder + filenames[2])
@@ -156,6 +156,7 @@ def main():
     group_file=read_file(folder + filenames[4])
     exercise_file = read_file(folder + filenames[5])
 
+    #split into rows
     ca1_rows=split_rows(ca1_file)
     ca2_rows=split_rows(ca2_file)
     final_rows=split_rows(final_file)
@@ -163,8 +164,10 @@ def main():
     group_rows=split_rows(group_file)
     exercise_rows = split_rows(exercise_file)
 
-
+    #to call student_info function to make list for first,last and id
     first_name_list,last_name_list,id_list=student_info(ca1_rows)
+
+    #to get the group id,total group mark and 15
     for student_id in id_list:
         group = find_group(student_id, group_rows)
         group_list.append(group)
@@ -176,11 +179,11 @@ def main():
     ca1_total,ca1_result_15,ca1_result_100=ca1_calculation(ca1_rows)    #to call ca1 calc function
     ca2_total,ca2_result_15,ca2_result_100=ca2_calculation(ca2_rows)    #to call ca2 calc function
     final_total,final_result_40,final_result_100=final_calculation(final_rows)     #to call final calc function
-    exercise_total,exercise_result_15,exercise_result_100=exercise_calculation(exercise_rows)
+    exercise_total,exercise_result_15,exercise_result_100=exercise_calculation(exercise_rows)   #to call exercise function
     overall_result=overall_calculation(ca1_result_15,ca2_result_15,exercise_result_15,project_15,final_result_40)
 
     students = []
-
+    #to put all the information for each student
     for i in range(len(id_list)):
         student = Student(
             first_name_list[i],
@@ -205,7 +208,7 @@ def main():
         )
 
         students.append(student)
-
+    #save as csv
     save_results(students, folder + "results.csv")  
 
 if __name__=="__main__":
