@@ -159,7 +159,7 @@ def save_results(students, filename):
     # Tell Excel that ; is the separator
 
     # Header
-    s += "Last name;First name;ID;"
+    s + "Last name;First name;ID;"
     s += "Total marks CA 1;Percentage achieved CA 1;Percentage CA 1 normalized to 15%;"
     s += "Total marks CA 2;Percentage achieved CA 2;Percentage CA 2 normalized to 15%;"
     s += "Total marks Exercises;Percentage achieved Exercises;Percentage Exercises normalized to 15%;"
