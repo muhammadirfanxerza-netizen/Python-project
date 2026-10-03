@@ -168,9 +168,6 @@ def save_results(students, filename):
     s += "Total marks Final Exam;Percentage achieved Final Exam;Percentage Final Exam normalized to 40%;"
     s += "Total percentage;Overall grade\n"
 
-    # Sort students alphabetically by last name
-    students = sorted(students, key=lambda student: student.last_name)
-
     for student in students:
 
         project_100 = round(student.project_total / 10 * 100, 2)
