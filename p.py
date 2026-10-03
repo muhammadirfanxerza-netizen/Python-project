@@ -7,7 +7,13 @@ folder = os.path.dirname(os.path.abspath(__file__)) + os.sep
 filenames=["Grades CA 1.csv","Grades CA 2.csv","Grades Final Exam.csv","Grades Groups.csv","Groups.csv","Grades Exercises.csv"]
 
 class Student:      #class 
-    def __init__(self,first_name,last_name,student_id,ca1_total,ca1_100,ca1_15,ca2_total,ca2_100,ca2_15,exercise_total,exercise_100,exercise_15,project_group,project_total,project_15,final_total,final_100,final_40,overall,grade):            #constructor
+    def __init__(self,first_name,last_name,student_id,
+                 ca1_total,ca1_100,ca1_15,
+                 ca2_total,ca2_100,ca2_15,
+                 exercise_total,exercise_100,exercise_15,
+                 project_group,project_total,project_15,
+                 final_total,final_100,final_40,
+                 overall,grade):            #constructor
        self.first_name=first_name
        self.last_name=last_name
        self.student_id=student_id
@@ -203,7 +209,7 @@ def save_results(students, filename):
     with open(filename, "w", encoding="utf-8") as f:
         f.write(s)
 
-def create_pdf(students, filename):
+def create_pdf(students, filename): #to create pdf
 
     pdf = SimpleDocTemplate(
         filename,
@@ -212,8 +218,8 @@ def create_pdf(students, filename):
 
     data = [
         ["Last name", "First name", "ID",
-         "CA1 15%", "CA2 /15", "Exercise /15",
-         "Project /15", "Final /40",
+         "CA1 15%", "CA2 15%", "Exercise 15%",
+         "Project 15%", "Final 40%",
          "Overall", "Grade"]
     ]
 
@@ -319,8 +325,8 @@ def main():
             overall_result[i],
             grade
         )
-
         students.append(student)
+
     #save as csv
     save_results(students,folder+"results.csv")  
     create_pdf(students, folder + "results.pdf")
