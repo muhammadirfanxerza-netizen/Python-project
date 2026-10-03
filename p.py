@@ -1,8 +1,9 @@
+import os
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 
-folder = "C:/Users/muham/Desktop/CSV files project/"
+folder = os.path.dirname(os.path.abspath(__file__)) + os.sep
 filenames=["Grades CA 1.csv","Grades CA 2.csv","Grades Final Exam.csv","Grades Groups.csv","Groups.csv","Grades Exercises.csv"]
 
 class Student:      #class 
@@ -198,15 +199,14 @@ def main():
     project_total= []
     project_15 = []
     group_list = []
-    student=[]
 
     #read all the csv files
-    ca1_file = read_file(folder + filenames[0])
-    ca2_file = read_file(folder + filenames[1])
-    final_file = read_file(folder + filenames[2])
-    group_grade_file=read_file(folder + filenames[3])
-    group_file=read_file(folder + filenames[4])
-    exercise_file = read_file(folder + filenames[5])
+    ca1_file = read_file(folder+filenames[0])
+    ca2_file = read_file(folder+filenames[1])
+    final_file = read_file(folder+filenames[2])
+    group_grade_file=read_file(folder+filenames[3])
+    group_file=read_file(folder+filenames[4])
+    exercise_file = read_file(folder+filenames[5])
 
     #split into rows
     ca1_rows=split_rows(ca1_file)
@@ -263,7 +263,7 @@ def main():
 
         students.append(student)
     #save as csv
-    save_results(students, folder + "results.csv")  
+    save_results(students,"results.csv")  
 
 if __name__=="__main__":
     main()
