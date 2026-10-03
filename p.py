@@ -156,13 +156,20 @@ def grade_check(overall):   #to check overall grade
 
 def save_results(students, filename):
 
-    s = "Last name;First name;ID;"
-    s += "CA1 Total;CA1 %;CA1 /15;"
-    s += "CA2 Total;CA2 %;CA2 /15;"
-    s += "Exercise Total;Exercise %;Exercise /15;"
-    s += "Project Group;Project Total;Project %;Project /15;"
-    s += "Final Total;Final %;Final /40;"
-    s += "Overall;Overall Grade\n"
+    # Tell Excel that ; is the separator
+    s = "sep=;\n"
+
+    # Header
+    s += "Last name;First name;ID;"
+    s += "Total marks CA 1;Percentage achieved CA 1;Percentage CA 1 normalized to 15%;"
+    s += "Total marks CA 2;Percentage achieved CA 2;Percentage CA 2 normalized to 15%;"
+    s += "Total marks Exercises;Percentage achieved Exercises;Percentage Exercises normalized to 15%;"
+    s += "Project Group;Total marks Project;Percentage achieved Project;Percentage Project normalized to 15%;"
+    s += "Total marks Final Exam;Percentage achieved Final Exam;Percentage Final Exam normalized to 40%;"
+    s += "Total percentage;Overall grade\n"
+
+    # Sort students alphabetically by last name
+    students = sorted(students, key=lambda student: student.last_name)
 
     for student in students:
 
@@ -171,28 +178,83 @@ def save_results(students, filename):
         s += f"{student.last_name};"
         s += f"{student.first_name};"
         s += f"{student.student_id};"
+
         s += f"{student.ca1_total:.2f};"
         s += f"{student.ca1_100:.2f};"
         s += f"{student.ca1_15:.2f};"
+
         s += f"{student.ca2_total:.2f};"
         s += f"{student.ca2_100:.2f};"
         s += f"{student.ca2_15:.2f};"
+
         s += f"{student.exercise_total:.2f};"
         s += f"{student.exercise_100:.2f};"
         s += f"{student.exercise_15:.2f};"
+
         s += f"{student.project_group};"
         s += f"{student.project_total:.2f};"
         s += f"{project_100:.2f};"
         s += f"{student.project_15:.2f};"
+
         s += f"{student.final_total:.2f};"
         s += f"{student.final_100:.2f};"
         s += f"{student.final_40:.2f};"
+
         s += f"{student.overall:.2f};"
         s += f"{student.grade}\n"
 
     with open(filename, "w", encoding="utf-8") as f:
         f.write(s)
 
+def create_pdf(students, filename):
+
+    pdf = SimpleDocTemplate(
+        filename,
+        pagesize=landscape(A4)
+    )
+
+    data = [
+        ["Last name", "First name", "ID",
+         "CA1 15%", "CA2 /15", "Exercise /15",
+         "Project /15", "Final /40",
+         "Overall", "Grade"]
+    ]
+
+    for student in students:
+        data.append([
+            student.last_name,
+            student.first_name,
+            student.student_id,
+            f"{student.ca1_15:.2f}",
+            f"{student.ca2_15:.2f}",
+            f"{student.exercise_15:.2f}",
+            f"{student.project_15:.2f}",
+            f"{student.final_40:.2f}",
+            f"{student.overall:.2f}",
+            student.grade
+        ])
+
+    table = Table(data, repeatRows=1)
+
+    style = TableStyle([
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
+        ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
+        ("FONTSIZE", (0, 0), (-1, -1), 8)
+    ])
+
+    # make failed students red
+    for i, student in enumerate(students, start=1):
+        if student.grade == "F":
+            style.add(
+                "TEXTCOLOR",
+                (0, i),
+                (-1, i),
+                colors.red
+            )
+
+    table.setStyle(style)
+
+    pdf.build([table])
         
 #to call the function in the main
 def main():
@@ -263,7 +325,7 @@ def main():
 
         students.append(student)
     #save as csv
-    save_results(students,"results.csv")  
-
+    save_results(students,folder+"results.csv")  
+    create_pdf(students, folder + "results.pdf")
 if __name__=="__main__":
     main()
