@@ -1,6 +1,28 @@
 folder = "C:/Users/muham/Desktop/CSV files project/"
 filenames=["Grades CA 1.csv","Grades CA 2.csv","Grades Final Exam.csv","Grades Groups.csv","Groups.csv","Grades Exercises.csv"]
 
+class Student:      #class 
+    def __init__(self,first_name,last_name,student_id,ca1_total,ca1_100,ca1_15,ca2_total,ca2_100,ca2_15,exercise_total,exercise_100,exercise_15,project_group,project_total,project_15,final_total,final_100,final_40,overall):            #constructor
+       self.first_name=first_name
+       self.last_name=last_name
+       self.student_id=student_id
+       self.ca1_total=ca1_total
+       self.ca1_100=ca1_100
+       self.ca1_15=ca1_15
+       self.ca2_total=ca2_total
+       self.ca2_100=ca2_100
+       self.ca2_15=ca2_15
+       self.exercise_total=exercise_total
+       self.exercise_100=exercise_100
+       self.exercise_15=exercise_15
+       self.project_group=project_group
+       self.project_total=project_total
+       self.project_15=project_15
+       self.final_total=final_total
+       self.final_100=final_100
+       self.final_40=final_40
+       self.overall=overall
+
 def read_file(path):                #function to read file
     with open(path,encoding="utf-8") as f:
         file_string=f.read()
@@ -22,7 +44,7 @@ def student_info(ca1_rows):
         student_id.append(col[2])
     return first_name,last_name,student_id
 
-def calculate_total_mark(col,start,end):
+def calculate_total_mark(col,start,end):  #total mark calculation function
     total_mark=0
     for i in range(start,end):
         total_mark+=float(col[i])
@@ -103,12 +125,29 @@ def overall_calculation(ca1_15,ca2_15,exercise_15,project_15,final_40):
         overall_result.append(round(total,2))
     return overall_result
 
+def save_results(students, filename):
+
+    s = "First name;Last name;ID;CA1 Total;CA1 %;CA1 /15;CA2 Total;CA2 %;CA2 /15;Exercise Total;Exercise %;Exercise /15;Project Group;Project Total;Project /15;Final Total;Final %;Final /40;Overall\n"
+
+    for student in students:
+        s += f"{student.first_name};{student.last_name};{student.student_id};"
+        s += f"{student.ca1_total};{student.ca1_100};{student.ca1_15};"
+        s += f"{student.ca2_total};{student.ca2_100};{student.ca2_15};"
+        s += f"{student.exercise_total};{student.exercise_100};{student.exercise_15};"
+        s += f"{student.project_group};{student.project_total};{student.project_15};"
+        s += f"{student.final_total};{student.final_100};{student.final_40};"
+        s += f"{student.overall}\n"
+
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write(s)
 
         
 #to call the function in the main
 def main():
-    project_results = []
+    project_total= []
+    project_15 = []
     group_list = []
+    student=[]
 
     ca1_file = read_file(folder + filenames[0])
     ca2_file = read_file(folder + filenames[1])
@@ -130,15 +169,44 @@ def main():
         group = find_group(student_id, group_rows)
         group_list.append(group)
         project_grade = find_group_grade(group, group_grade_rows)
-        project_grade = round(project_grade / 10 * 15, 2)
-        project_results.append(project_grade)
+        project_total.append(project_grade)
+        project_grade_15 = round(project_grade / 10 * 15, 2)
+        project_15.append(project_grade_15)
 
     ca1_total,ca1_result_15,ca1_result_100=ca1_calculation(ca1_rows)    #to call ca1 calc function
     ca2_total,ca2_result_15,ca2_result_100=ca2_calculation(ca2_rows)    #to call ca2 calc function
     final_total,final_result_40,final_result_100=final_calculation(final_rows)     #to call final calc function
     exercise_total,exercise_result_15,exercise_result_100=exercise_calculation(exercise_rows)
-    overall_result=overall_calculation(ca1_result_15,ca2_result_15,exercise_result_15,project_results,final_result_40)
+    overall_result=overall_calculation(ca1_result_15,ca2_result_15,exercise_result_15,project_15,final_result_40)
 
+    students = []
+
+    for i in range(len(id_list)):
+        student = Student(
+            first_name_list[i],
+            last_name_list[i],
+            id_list[i],
+            ca1_total[i],
+            ca1_result_100[i],
+            ca1_result_15[i],
+            ca2_total[i],
+            ca2_result_100[i],
+            ca2_result_15[i],
+            exercise_total[i],
+            exercise_result_100[i],
+            exercise_result_15[i],
+            group_list[i],
+            project_total[i],
+            project_15[i],
+            final_total[i],
+            final_result_100[i],
+            final_result_40[i],
+            overall_result[i]
+        )
+
+        students.append(student)
+
+    save_results(students, folder + "results.csv")  
 
 if __name__=="__main__":
     main()
