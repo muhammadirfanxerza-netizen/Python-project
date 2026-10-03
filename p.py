@@ -1,8 +1,12 @@
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4, landscape
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+
 folder = "C:/Users/muham/Desktop/CSV files project/"
 filenames=["Grades CA 1.csv","Grades CA 2.csv","Grades Final Exam.csv","Grades Groups.csv","Groups.csv","Grades Exercises.csv"]
 
 class Student:      #class 
-    def __init__(self,first_name,last_name,student_id,ca1_total,ca1_100,ca1_15,ca2_total,ca2_100,ca2_15,exercise_total,exercise_100,exercise_15,project_group,project_total,project_15,final_total,final_100,final_40,overall):            #constructor
+    def __init__(self,first_name,last_name,student_id,ca1_total,ca1_100,ca1_15,ca2_total,ca2_100,ca2_15,exercise_total,exercise_100,exercise_15,project_group,project_total,project_15,final_total,final_100,final_40,overall,grade):            #constructor
        self.first_name=first_name
        self.last_name=last_name
        self.student_id=student_id
@@ -22,6 +26,7 @@ class Student:      #class
        self.final_100=final_100
        self.final_40=final_40
        self.overall=overall
+       self.grade=grade
 
 def read_file(path):                #function to read file
     with open(path,encoding="utf-8") as f:
@@ -124,18 +129,65 @@ def overall_calculation(ca1_15,ca2_15,exercise_15,project_15,final_40): #Total g
         overall_result.append(round(total,2))
     return overall_result
 
-def save_results(students, filename):   #to save result function
+def grade_check(overall):   #to check overall grade
+    if overall>=85 and overall<=100:
+        return "A+"
+    elif overall>=80 and overall<85:
+        return "A"
+    elif overall>=75 and overall<80:
+        return "A-"
+    elif overall>=70 and overall<75:
+        return "B+"
+    elif overall>=65 and overall<70:
+        return "B"
+    elif overall>=60 and overall<65:
+        return "B-"
+    elif overall>=55 and overall<60:
+        return "C+"
+    elif overall>=50 and overall<55:
+        return "C"
+    elif overall>=45 and overall<50:
+        return "D+"
+    elif overall>=40 and overall<45:
+        return "D"
+    else:
+        return "F"
 
-    s = "First name;Last name;ID;CA1 Total;CA1 %;CA1 /15;CA2 Total;CA2 %;CA2 /15;Exercise Total;Exercise %;Exercise /15;Project Group;Project Total;Project /15;Final Total;Final %;Final /40;Overall\n"
+def save_results(students, filename):
+
+    s = "Last name;First name;ID;"
+    s += "CA1 Total;CA1 %;CA1 /15;"
+    s += "CA2 Total;CA2 %;CA2 /15;"
+    s += "Exercise Total;Exercise %;Exercise /15;"
+    s += "Project Group;Project Total;Project %;Project /15;"
+    s += "Final Total;Final %;Final /40;"
+    s += "Overall;Overall Grade\n"
 
     for student in students:
-        s += f"{student.first_name};{student.last_name};{student.student_id};"
-        s += f"{student.ca1_total};{student.ca1_100};{student.ca1_15};"
-        s += f"{student.ca2_total};{student.ca2_100};{student.ca2_15};"
-        s += f"{student.exercise_total};{student.exercise_100};{student.exercise_15};"
-        s += f"{student.project_group};{student.project_total};{student.project_15};"
-        s += f"{student.final_total};{student.final_100};{student.final_40};"
-        s += f"{student.overall}\n"
+
+        project_100 = round(student.project_total / 10 * 100, 2)
+
+        s += f"{student.last_name};"
+        s += f"{student.first_name};"
+        s += f"{student.student_id};"
+        s += f"{student.ca1_total:.2f};"
+        s += f"{student.ca1_100:.2f};"
+        s += f"{student.ca1_15:.2f};"
+        s += f"{student.ca2_total:.2f};"
+        s += f"{student.ca2_100:.2f};"
+        s += f"{student.ca2_15:.2f};"
+        s += f"{student.exercise_total:.2f};"
+        s += f"{student.exercise_100:.2f};"
+        s += f"{student.exercise_15:.2f};"
+        s += f"{student.project_group};"
+        s += f"{student.project_total:.2f};"
+        s += f"{project_100:.2f};"
+        s += f"{student.project_15:.2f};"
+        s += f"{student.final_total:.2f};"
+        s += f"{student.final_100:.2f};"
+        s += f"{student.final_40:.2f};"
+        s += f"{student.overall:.2f};"
+        s += f"{student.grade}\n"
 
     with open(filename, "w", encoding="utf-8") as f:
         f.write(s)
@@ -185,6 +237,7 @@ def main():
     students = []
     #to put all the information for each student
     for i in range(len(id_list)):
+        grade=grade_check(overall_result[i])
         student = Student(
             first_name_list[i],
             last_name_list[i],
@@ -204,7 +257,8 @@ def main():
             final_total[i],
             final_result_100[i],
             final_result_40[i],
-            overall_result[i]
+            overall_result[i],
+            grade
         )
 
         students.append(student)
