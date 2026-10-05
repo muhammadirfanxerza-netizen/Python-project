@@ -321,7 +321,7 @@ def main():
 
         students.append(student)
     #save as csv
-    save_results(students,folder+"results.csv")  
+    save_results(students,folder+"Group_5.csv")  
     create_pdf(students, folder + "results.pdf")
 if __name__=="__main__":
     main()
