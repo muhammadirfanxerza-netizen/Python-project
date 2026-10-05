@@ -329,6 +329,6 @@ def main():
 
     #save as csv
     save_results(students,folder+"Group_5.csv")  
-    create_pdf(students, folder + "results.pdf")
+    create_pdf(students, folder + "Group_5.pdf")
 if __name__=="__main__":
     main()
